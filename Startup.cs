@@ -30,6 +30,9 @@ namespace omission.api
         {
             services.AddControllers();
 
+            services.AddCors(action => action.AddPolicy("allowUser", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
+
+
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
            {
@@ -65,7 +68,7 @@ namespace omission.api
                });
                c.AddSecurityRequirement(security);
            });
-            
+
             // ? Services 
             services.AddScoped<UserService>();
 
@@ -102,6 +105,8 @@ namespace omission.api
             {
                 endpoints.MapControllers();
             });
+
+            app.UseCors();
         }
     }
 }

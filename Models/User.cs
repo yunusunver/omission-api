@@ -2,13 +2,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace omission.api.Models
 {
-    public class User :BaseEntity  {
+    public class User : BaseEntity
+    {
 
         [Column("name")]
         public string Name { get; set; }
 
-        
-      
+
+
 
         [Column("surname")]
         public string Surname { get; set; }
@@ -22,7 +23,13 @@ namespace omission.api.Models
         [Column("password")]
         public string Password { get; set; }
         [Column("unlimited")]
-        public bool Unlimited { get; set; }=false;
+        public bool Unlimited { get; set; } = false;
+
+        [Column("confirmationkey")]
+        public string ConfirmationKey { get; set; }
+
+        [Column("isactive")]
+        public bool IsActive { get; set; }
 
         [Column("rightids")]
         public int[] RightIds { get; set; }

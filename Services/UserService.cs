@@ -4,6 +4,8 @@ using omission.api.Exceptions;
 using omission.api.Models;
 using omission.api.Utility;
 using omission.api.Utility.Crypto;
+using omission.api.Utility.Mail;
+using System.Linq;
 
 namespace omission.api.Services
 {
@@ -41,10 +43,40 @@ namespace omission.api.Services
                 Surname = registerDTO.Surname,
                 Email = registerDTO.Email,
                 Password = CryptoPassword.GetSha(registerDTO.Password),
-                UpdatedDate = null
+                UpdatedDate = null,
+                ConfirmationKey = CryptoPassword.GetSha(registerDTO.Email),
+                IsActive = false
             };
             _context.Users.Add(user);
             _context.SaveChanges();
+
+
+            string bodyHtml = $"<html> <head> <body>  Üyeliğiniz aktif olması için <a href=http://localhost:5000/api/User/userActivate?confirmationKey={user.ConfirmationKey}&mail={user.Email}> bu </a> linke tıklayınız  </body>  </head>  </html> ";
+            string subject = "USER-ACTIVATION";
+            this.sendEmail(bodyHtml, subject, user.Email);
+        }
+
+        public void sendEmail(string bodyHtml, string subject, string email)
+        {
+
+            MailHelper.Send(bodyHtml, subject, email);
+
+        }
+        public bool UserActivate(string confirmationKey, string mail)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.ConfirmationKey == confirmationKey && x.Email == mail);
+
+            if (user != null)
+            {
+                user.IsActive = true;
+                var result = _context.Users.Update(user);
+                var result2 = _context.SaveChanges();
+                return true;
+            }
+
+            throw new ServiceException("Onay kodu geçerli değil");
+
+
         }
     }
 }

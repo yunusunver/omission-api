@@ -32,7 +32,7 @@ namespace omission.api.Controllers
                 _userService.RegisterValidation(registerDTO);
                 // Validation 
                 _userService.Register(registerDTO);
-                
+
                 return Ok();
             }
 
@@ -52,6 +52,37 @@ namespace omission.api.Controllers
 
         }
 
+        [HttpGet]
+        [Route("userActivate")]
+        [AllowAnonymous]
+        public IActionResult UserActivate(string confirmationKey, string mail)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(confirmationKey))
+                    throw new ServiceException("Confirmation key bulunamadı.");
+
+                if (string.IsNullOrEmpty(mail))
+                    throw new ServiceException("Email Bulunamadı.");
+
+                var emailControl = _userService.UserActivate(confirmationKey, mail);
+                return Ok(emailControl);
+            }
+
+            catch (ServiceException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+
+        }
+
 
     }
+
+
 }
