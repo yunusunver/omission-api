@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\projects\\omission.api\\omission.api.csproj": {}
+    "/Users/yunusunver/Desktop/omission.api/omission.api.csproj": {}
   },
   "projects": {
-    "D:\\projects\\omission.api\\omission.api.csproj": {
+    "/Users/yunusunver/Desktop/omission.api/omission.api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projects\\omission.api\\omission.api.csproj",
+        "projectUniqueName": "/Users/yunusunver/Desktop/omission.api/omission.api.csproj",
         "projectName": "omission.api",
-        "projectPath": "D:\\projects\\omission.api\\omission.api.csproj",
-        "packagesPath": "C:\\Users\\ertan\\.nuget\\packages\\",
-        "outputPath": "D:\\projects\\omission.api\\obj\\",
+        "projectPath": "/Users/yunusunver/Desktop/omission.api/omission.api.csproj",
+        "packagesPath": "/Users/yunusunver/.nuget/packages/",
+        "outputPath": "/Users/yunusunver/Desktop/omission.api/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\ertan\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/yunusunver/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -39,12 +36,6 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
-            "Microsoft.EntityFrameworkCore.Design": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[3.1.8, )"
-            },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
@@ -53,7 +44,7 @@
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[5.0.0-preview8, )"
+              "version": "[3.1.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -78,7 +69,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.401/RuntimeIdentifierGraph.json"
         }
       }
     }
