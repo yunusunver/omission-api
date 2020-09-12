@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using omission.api.Context;
+using omission.api.Services;
 
 namespace omission.api
 {
@@ -64,7 +65,11 @@ namespace omission.api
                });
                c.AddSecurityRequirement(security);
            });
+            
+            // ? Services 
+            services.AddScoped<UserService>();
 
+            // ? Context 
             services.AddDbContext<OmissionContext>(ServiceLifetime.Scoped);
 
         }

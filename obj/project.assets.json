@@ -1090,19 +1090,23 @@
     ]
   },
   "packageFolders": {
-    "/Users/yunusunver/.nuget/packages/": {}
+    "C:\\Users\\ertan\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/yunusunver/Desktop/omission.api/omission.api.csproj",
+      "projectUniqueName": "d:\\projects\\omission.api\\omission.api.csproj",
       "projectName": "omission.api",
-      "projectPath": "/Users/yunusunver/Desktop/omission.api/omission.api.csproj",
-      "packagesPath": "/Users/yunusunver/.nuget/packages/",
-      "outputPath": "/Users/yunusunver/Desktop/omission.api/obj/",
+      "projectPath": "d:\\projects\\omission.api\\omission.api.csproj",
+      "packagesPath": "C:\\Users\\ertan\\.nuget\\packages\\",
+      "outputPath": "d:\\projects\\omission.api\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "/Users/yunusunver/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\ertan\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -1157,7 +1161,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.401/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
       }
     }
   }

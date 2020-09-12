@@ -9,11 +9,14 @@ namespace omission.api.Models
         public int Id { get; set; }
 
         [Column("createddate")]
-        public DateTime? CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
         [Column("updateddate")]
 
-        public DateTime? UpdatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; } = DateTime.Now;
         [Column("isdeleted")]
-        public bool isDeleted { get; set; }
+        public bool isDeleted { get; set; } = false;
+
+        
+
     }
 }
