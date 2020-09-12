@@ -3,6 +3,7 @@ using omission.api.Context;
 using omission.api.Exceptions;
 using omission.api.Models;
 using omission.api.Utility;
+using omission.api.Utility.Crypto;
 
 namespace omission.api.Services
 {
@@ -39,7 +40,7 @@ namespace omission.api.Services
                 Name = registerDTO.Name,
                 Surname = registerDTO.Surname,
                 Email = registerDTO.Email,
-                Password = registerDTO.Password,
+                Password = CryptoPassword.GetSha(registerDTO.Password),
                 UpdatedDate = null
             };
             _context.Users.Add(user);
