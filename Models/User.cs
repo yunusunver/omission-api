@@ -13,7 +13,7 @@ namespace omission.api.Models
         [Column("email")]
         public string Email { get; set; }
 
-        [Column("profileimageUrl")]
+        [Column("profileimageurl")]
         public string ProfileImageUrl { get; set; }
 
         [Column("password")]
