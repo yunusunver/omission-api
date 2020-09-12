@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using omission.api.Context;
 using omission.api.Services;
@@ -68,6 +71,24 @@ namespace omission.api
                });
                c.AddSecurityRequirement(security);
            });
+
+            string tokenByte = Configuration.GetValue<string>("Token_KEY");
+            byte[] tokenKeyByte = Encoding.ASCII.GetBytes(tokenByte);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(tokenKeyByte),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
 
             // ? Services 
             services.AddScoped<UserService>();

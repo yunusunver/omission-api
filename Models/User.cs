@@ -8,9 +8,6 @@ namespace omission.api.Models
         [Column("name")]
         public string Name { get; set; }
 
-
-
-
         [Column("surname")]
         public string Surname { get; set; }
 
@@ -33,6 +30,8 @@ namespace omission.api.Models
 
         [Column("rightids")]
         public int[] RightIds { get; set; }
+
+        
 
     }
 }

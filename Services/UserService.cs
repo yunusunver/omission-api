@@ -6,16 +6,24 @@ using omission.api.Utility;
 using omission.api.Utility.Crypto;
 using omission.api.Utility.Mail;
 using System.Linq;
+using omission.api.Models.DTO;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 
 namespace omission.api.Services
 {
     public class UserService
     {
         private OmissionContext _context;
+        private IConfiguration _configuration;
 
-        public UserService(OmissionContext context)
+        public UserService(OmissionContext context,IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public void RegisterValidation(RegisterDTO registerDTO)
@@ -62,6 +70,45 @@ namespace omission.api.Services
             MailHelper.Send(bodyHtml, subject, email);
 
         }
+
+        public string Login(LoginDTO loginDTO)
+        {
+            var cryptoPassword = CryptoPassword.GetSha(loginDTO.Password);
+            var user = _context.Users.FirstOrDefault(x => x.Email == loginDTO.Email && x.Password == cryptoPassword);
+            if (user == null)
+                throw new ServiceException(ExceptionMessages.USER_NOT_FOUND);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey = this._configuration.GetValue<string>("Token_KEY");
+            var tokenKeyByte = Encoding.ASCII.GetBytes(tokenKey);
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = new ClaimsIdentity(new Claim[]{
+                    new Claim("Name",user.Name),
+                    new Claim("Surname",user.Surname),
+                    new Claim("Email",user.Email),
+                    new Claim("Id", Convert.ToString(user.Id) ),
+
+                }),
+                Expires = DateTime.UtcNow.AddHours(24),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKeyByte), SecurityAlgorithms.HmacSha512)
+            };
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            string token = tokenHandler.WriteToken(securityToken);
+            
+            return token;
+
+        }
+
+        public void LoginValidation(LoginDTO loginDTO)
+        {
+            if (string.IsNullOrEmpty(loginDTO.Email))
+                throw new ServiceException(ExceptionMessages.EMAIL_CANNOT_BE_BLANK);
+
+            if (string.IsNullOrEmpty(loginDTO.Password))
+                throw new ServiceException(ExceptionMessages.PASSWORD_CANNOT_BE_BLANK);
+        }
+
         public bool UserActivate(string confirmationKey, string mail)
         {
             var user = _context.Users.FirstOrDefault(x => x.ConfirmationKey == confirmationKey && x.Email == mail);

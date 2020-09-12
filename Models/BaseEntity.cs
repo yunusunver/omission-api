@@ -16,7 +16,6 @@ namespace omission.api.Models
         [Column("isdeleted")]
         public bool isDeleted { get; set; } = false;
 
-        
 
     }
 }

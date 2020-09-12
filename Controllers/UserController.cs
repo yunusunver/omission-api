@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using omission.api.Exceptions;
 using omission.api.Models;
+using omission.api.Models.DTO;
 using omission.api.Services;
 
 namespace omission.api.Controllers
@@ -13,8 +14,6 @@ namespace omission.api.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-
-
         private UserService _userService;
 
         public UserController(UserService userService)
@@ -22,9 +21,9 @@ namespace omission.api.Controllers
             _userService = userService;
         }
 
-        [AllowAnonymous]
         [HttpPost]
         [Route("register")]
+        [AllowAnonymous]
         public IActionResult Register([FromBody] RegisterDTO registerDTO)
         {
             try
@@ -77,6 +76,33 @@ namespace omission.api.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+
+        }
+
+        [HttpPost]
+        [Route("login")]
+        [AllowAnonymous]
+        public IActionResult Login([FromBody] LoginDTO loginDTO)
+        {
+            try
+            {
+                _userService.LoginValidation(loginDTO);
+                var result = _userService.Login(loginDTO);
+                return Ok(result);
+            }
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
             }
 
         }
