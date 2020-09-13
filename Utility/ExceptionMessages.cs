@@ -18,6 +18,7 @@ namespace omission.api.Utility
 
         public const string CODEBODY_CANNOT_BE_BLANK = "Kod içeriği boş bırakılamaz";
 
+        public const string USER_NOT_ACTIVE  = "Bu kullanıcı aktif değil.";
     }   
     
 }

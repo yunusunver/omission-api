@@ -21,16 +21,14 @@ namespace omission.api.Controllers
             _codeService = codeService;
         }
 
-       
+
         [HttpPost]
-        [Route("addCode")]
-        [AllowAnonymous]
         public IActionResult AddCode([FromBody] CodeDTO codeDTO)
         {
             try
             {
                 _codeService.CodeValidation(codeDTO);
-                _codeService.AddCode(codeDTO);   
+                _codeService.AddCode(codeDTO);
                 return Ok();
             }
             catch (AuthenticationException)
@@ -50,7 +48,31 @@ namespace omission.api.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult GetCodes([FromQuery] CodeListDTO codeListDTO  )
+        {
+            try
+            {
+               var result =  _codeService.GetCodes(codeListDTO);
+                return Ok(result);
+            }
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
+            }
+        }
+
+
     }
 
-   
+
 }

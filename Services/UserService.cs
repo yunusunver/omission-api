@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace omission.api.Services
 {
@@ -20,10 +21,14 @@ namespace omission.api.Services
         private OmissionContext _context;
         private IConfiguration _configuration;
 
-        public UserService(OmissionContext context,IConfiguration configuration)
+        private readonly ClaimsPrincipal _principal;
+
+
+        public UserService(OmissionContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _configuration = configuration;
+            _principal = httpContextAccessor.HttpContext.User;
         }
 
         public void RegisterValidation(RegisterDTO registerDTO)
@@ -41,6 +46,22 @@ namespace omission.api.Services
             if (registerDTO.Password != registerDTO.RePassword)
                 throw new ServiceException(ExceptionMessages.PASSWORDS_NOT_MATCHES);
 
+        }
+
+
+
+
+
+       
+        public User GetLoggedInUser()
+        {
+            User loginUserVM = new User();
+            var principal = _principal.Claims.ToDictionary(x => x.Type, x => x.Value);
+            loginUserVM.Email = principal["Email"];
+            loginUserVM.Name = principal["Name"];
+            loginUserVM.Surname = principal["Surname"];
+            loginUserVM.Id = Convert.ToInt32(principal["Id"]);
+            return loginUserVM;
         }
 
         public void Register(RegisterDTO registerDTO)
@@ -77,9 +98,11 @@ namespace omission.api.Services
             var user = _context.Users.FirstOrDefault(x => x.Email == loginDTO.Email && x.Password == cryptoPassword);
             if (user == null)
                 throw new ServiceException(ExceptionMessages.USER_NOT_FOUND);
+            if(!user.IsActive)
+                throw new ServiceException(ExceptionMessages.USER_NOT_ACTIVE);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = this._configuration.GetValue<string>("Token_KEY");
+            var tokenKey = this._configuration.GetValue<string>("Token_Key");
             var tokenKeyByte = Encoding.ASCII.GetBytes(tokenKey);
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
@@ -95,7 +118,7 @@ namespace omission.api.Services
             };
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
             string token = tokenHandler.WriteToken(securityToken);
-            
+
             return token;
 
         }

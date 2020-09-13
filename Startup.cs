@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -72,7 +73,7 @@ namespace omission.api
                c.AddSecurityRequirement(security);
            });
 
-            string tokenByte = Configuration.GetValue<string>("Token_KEY");
+            string tokenByte = Configuration.GetValue<string>("Token_Key");
             byte[] tokenKeyByte = Encoding.ASCII.GetBytes(tokenByte);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -89,9 +90,13 @@ namespace omission.api
                 };
             });
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
             // ? Services 
             services.AddScoped<UserService>();
+            services.AddScoped<CodeService>();
+
 
             // ? Context 
             services.AddDbContext<OmissionContext>(ServiceLifetime.Scoped);
@@ -120,7 +125,9 @@ namespace omission.api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
