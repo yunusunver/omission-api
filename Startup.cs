@@ -96,6 +96,7 @@ namespace omission.api
             // ? Services 
             services.AddScoped<UserService>();
             services.AddScoped<CodeService>();
+            services.AddScoped<LookupService>();
 
 
             // ? Context 
