@@ -49,11 +49,11 @@ namespace omission.api.Controllers
 
 
         [HttpGet]
-        public IActionResult GetCodes([FromQuery] CodeListDTO codeListDTO  )
+        public IActionResult GetCodes([FromQuery] CodeListDTO codeListDTO)
         {
             try
             {
-               var result =  _codeService.GetCodes(codeListDTO);
+                var result = _codeService.GetCodes(codeListDTO);
                 return Ok(result);
             }
             catch (AuthenticationException)
@@ -71,7 +71,52 @@ namespace omission.api.Controllers
             }
         }
 
+        [HttpPut]
+        public IActionResult UpdateCode([FromBody] CodeUpdateDTO codeUpdateDTO)
+        {
+            try
+            {
+                _codeService.UpdateCode(codeUpdateDTO);
+                return Ok();
+            }
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCode(int id)
+        {
+            try
+            {
+                _codeService.DeleteCode(id);
+                return Ok();
+            }
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
+            }
+        }
+        
     }
 
 

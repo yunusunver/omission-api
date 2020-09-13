@@ -26,5 +26,11 @@ namespace omission.api.Services
             return _context.Lookups.Where(x=>x.Type==type).ToList();   
             
         }
+
+        public Lookup GetById(int id){
+            return _context.Lookups.FirstOrDefault(x=>x.Id==id);
+        }
+
+        
     }
 }

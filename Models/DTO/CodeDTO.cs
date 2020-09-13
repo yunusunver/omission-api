@@ -9,6 +9,6 @@ namespace omission.api.Models.DTO
 
         public string Code { get; set; }
 
-        public int[] Hashtags { get; set; }
+        public int[] Hashtags { get; set; } = {};
     }
 }

@@ -16,13 +16,16 @@ namespace omission.api.Services
 
         private UserService _userService;
         private LookupService _lookUpService;
+        private HashtagService _hashtagService;
         private OmissionContext _context;
 
-        public CodeService(UserService userService, OmissionContext context, LookupService lookupService)
+        public CodeService(UserService userService, OmissionContext context, LookupService lookupService,HashtagService hashtagService)
         {
             _userService = userService;
             _lookUpService = lookupService;
+            _hashtagService = hashtagService;
             _context = context;
+
         }
 
         public void CodeValidation(CodeDTO codeDTO)
@@ -50,7 +53,7 @@ namespace omission.api.Services
                 UpdatedDate = null,
                 UpdatedBy = 0,
                 CreatedBy = currentUser.Id,
-                // Hashtags = 
+                Hashtags = codeDTO.Hashtags
 
             };
             _context.Codes.Add(code);
@@ -65,26 +68,78 @@ namespace omission.api.Services
             Expression<Func<Code, bool>> where = x => x.isDeleted == false && x.CreatedBy == currentUser.Id && (
                  string.IsNullOrEmpty(codeListDTO.Search) || x.Title.Contains(codeListDTO.Search)
              );
-            var lookups = _lookUpService.GetCodes("programmingLanguage");
+            var programmingLanguages = _lookUpService.GetCodes("programmingLanguage");
             var skipData = (codeListDTO.Page - 1) * codeListDTO.Limit;
             var codes = _context.Codes.Where(where).Skip(skipData).Take(codeListDTO.Limit).ToList();
-
+            // var userUsedHashTags = codes.Select(x=>x.Hashtags).Distinct();
             var result = (from code in codes
-                          join lookupData in lookups
-                          on code.LookupId equals lookupData.Id
+                          join programminLanguage in programmingLanguages
+                          on code.LookupId equals programminLanguage.Id
+
+
                           select new CodeListVM()
                           {
+                              Id = code.Id,
                               CreatedDate = code.CreatedDate,
+                              UpdatedDate = code.UpdatedDate,
                               Description = code.Description,
                               Title = code.Title,
                               Code = code.Body,
-                              ProgrammingLanguage = lookupData.Name
+                              ProgrammingLanguage = programminLanguage.Name,
+                              HashTags = this.getHashTagsByName(code.Hashtags)
                           }
 
             ).ToList();
 
             return result;
 
+        }
+
+        public List<string> getHashTagsByName(int[] hashTags){
+            
+            List<string> hashTagNames = new List<string>();
+            if(hashTags.Length<=0 ||  hashTags==null) return hashTagNames;
+            foreach (var item in hashTags)
+            {
+                var hashtag = _hashtagService.GetById(item);
+                hashTagNames.Add(hashtag.Name);
+            }
+
+            return hashTagNames;
+
+        }
+
+        public void DeleteCode(int id)
+        {
+            if (id <= 0)
+                throw new ServiceException(ExceptionMessages.CODEID_NOT_AVAILABLE);
+            var findedCode = _context.Codes.FirstOrDefault(x => x.Id == id);
+            if (findedCode == null)
+                throw new ServiceException(ExceptionMessages.CODE_NOT_FOUND);
+            findedCode.isDeleted  = true;   
+            _context.SaveChanges();
+        }
+
+        public void UpdateCode(CodeUpdateDTO codeUpdateDTO)
+        {
+            var currentUser = _userService.GetLoggedInUser();
+            if (codeUpdateDTO.Id <= 0)
+                throw new ServiceException(ExceptionMessages.CODEID_NOT_AVAILABLE);
+            
+            var findedCode = _context.Codes.FirstOrDefault(x => x.Id == codeUpdateDTO.Id);
+            if (findedCode == null)
+                throw new ServiceException(ExceptionMessages.CODE_NOT_FOUND);
+            
+            findedCode.Title = codeUpdateDTO.CodeDTO.Title;
+            findedCode.Description = codeUpdateDTO.CodeDTO.Description;
+            findedCode.Body = codeUpdateDTO.CodeDTO.Code;
+            findedCode.Hashtags = codeUpdateDTO.CodeDTO.Hashtags;
+            findedCode.LookupId = codeUpdateDTO.CodeDTO.LookupId;
+            findedCode.UpdatedBy = currentUser.Id;
+            findedCode.UpdatedDate = DateTime.Now;
+            
+            _context.Codes.Update(findedCode);
+            _context.SaveChanges();
         }
     }
 }

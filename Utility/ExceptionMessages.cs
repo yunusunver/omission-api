@@ -19,6 +19,10 @@ namespace omission.api.Utility
         public const string CODEBODY_CANNOT_BE_BLANK = "Kod içeriği boş bırakılamaz";
 
         public const string USER_NOT_ACTIVE  = "Bu kullanıcı aktif değil.";
+
+        public static string CODE_NOT_FOUND  = "Kod bulunamadı";
+
+        public static string CODEID_NOT_AVAILABLE ="Kod Idsi 0 dan büyük olmalıdır.";
     }   
     
 }
