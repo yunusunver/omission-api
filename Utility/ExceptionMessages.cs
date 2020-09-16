@@ -23,6 +23,8 @@ namespace omission.api.Utility
         public static string CODE_NOT_FOUND  = "Kod bulunamadı";
 
         public static string CODEID_NOT_AVAILABLE ="Kod Idsi 0 dan büyük olmalıdır.";
+
+        public static string TYPE_CANNOT_BE_BLANK ="Type alanı boş bırakılamaz";
     }   
     
 }
