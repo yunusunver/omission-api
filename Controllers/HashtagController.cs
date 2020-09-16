@@ -9,54 +9,29 @@ using omission.api.Utility;
 
 namespace omission.api.Controllers
 {
+
     [ApiController]
     [Route("api/[controller]")]
-    public class LookupController : ControllerBase
+    public class HashtagController : ControllerBase
     {
-
         private OmissionContext _context;
-        private LookupService _lookupService;
 
-        public LookupController(OmissionContext context, LookupService lookupService)
+        private HashtagService _hashtagService;
+
+        public HashtagController(OmissionContext context, HashtagService hashtagService)
         {
             _context = context;
-            _lookupService = lookupService;
+            _hashtagService = hashtagService;
         }
 
-        [HttpGet("type")]
-        public IActionResult Get(string type)
+        [HttpGet]
+        public IActionResult Get()
         {
             try
             {
-                if (string.IsNullOrEmpty(type))
-                    throw new ServiceException(ExceptionMessages.TYPE_CANNOT_BE_BLANK);
-                var result = _lookupService.GetCodes(type);
+                var result = _hashtagService.Gets();
                 return Ok(result);
-            }
 
-            catch (AuthenticationException)
-            {
-                return Forbid();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.StackTrace);
-            }
-
-        }
-
-        [HttpPut]
-        public IActionResult Put(LookupUpdateDTO lookupDTO)
-        {
-            try
-            {
-                _lookupService.PutValidation(lookupDTO);
-                _lookupService.Update(lookupDTO);
-                return Ok();
             }
             catch (AuthenticationException)
             {
@@ -70,16 +45,15 @@ namespace omission.api.Controllers
             {
                 return BadRequest(ex.StackTrace);
             }
-
         }
 
         [HttpPost]
-        public IActionResult Post(LookupCreateDTO lookupCreateDTO)
+        public IActionResult Post([FromBody] HashtagCreateDTO hashtagCreateDTO)
         {
             try
             {
-                _lookupService.PostValidation(lookupCreateDTO);
-                _lookupService.Add(lookupCreateDTO);
+                _hashtagService.CreateValidation(hashtagCreateDTO);
+                _hashtagService.Add(hashtagCreateDTO);
                 return Ok();
             }
             catch (AuthenticationException)
@@ -96,15 +70,38 @@ namespace omission.api.Controllers
             }
         }
 
+        [HttpPut]
+        public IActionResult Put([FromBody] HashtagUpdateDTO hashtagUpdateDTO)
+        {
+            try
+            {
+                _hashtagService.UpdateValidation(hashtagUpdateDTO);
+                _hashtagService.Update(hashtagUpdateDTO);
+                return Ok();
+            }
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
+            }
+        }
 
         [HttpDelete("id")]
         public IActionResult Delete(int id)
         {
+
             try
             {
                 if (id <= 0)
-                    throw new ServiceException(ExceptionMessages.LOOKUP_ID_NOT_AVAILABLE);
-                _lookupService.Remove(id);
+                    throw new ServiceException(ExceptionMessages.HASHTAG_ID_NOT_AVAILABLE);
+                _hashtagService.Remove(id);
                 return Ok();
             }
             catch (AuthenticationException)
@@ -120,8 +117,10 @@ namespace omission.api.Controllers
                 return BadRequest(ex.StackTrace);
             }
 
-
-
         }
+
+
+
+
     }
 }

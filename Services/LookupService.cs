@@ -23,14 +23,78 @@ namespace omission.api.Services
         public List<Lookup> GetCodes(string type)
         {
 
-            return _context.Lookups.Where(x=>x.Type==type).ToList();   
+            return _context.Lookups.Where(x => x.Type == type).ToList();
+
+        }
+
+        public Lookup GetById(int id)
+        {
+            return _context.Lookups.FirstOrDefault(x => x.Id == id);
+        }
+
+
+        public void Update(LookupUpdateDTO lookupDTO)
+        {
+            
+            var lookup = _context.Lookups.FirstOrDefault(x=>x.Id==lookupDTO.Id);
+            if(lookup==null) 
+                throw new ServiceException(ExceptionMessages.LOOKUP_NOT_FOUND);
+            
+            lookup.UpdatedDate = DateTime.Now;
+            lookup.Name = lookupDTO.Name;
+            lookup.Type = lookupDTO.Type;
+            lookup.OrderId = lookupDTO.OrderId;
+            
+            _context.Update(lookup);
+            _context.SaveChanges();
+        }   
+
+        public void Add(LookupCreateDTO lookupDTO)
+        {
+            Lookup lookup = new Lookup {
+                Name = lookupDTO.Name,
+                Type = lookupDTO.Type,
+                OrderId = lookupDTO.OrderId,
+                CreatedDate = DateTime.Now,
+                UpdatedDate = null
+
+            };
+            _context.Lookups.Add(lookup);
+            _context.SaveChanges();
+        }
+
+        public void Remove(int id)
+        {
+            var lookup = _context.Lookups.FirstOrDefault(x=>x.Id==id);
+            if(lookup == null) 
+                throw new ServiceException(ExceptionMessages.LOOKUP_NOT_FOUND);
+            
+            lookup.isDeleted = true;
+            _context.Lookups.Update(lookup);
+            _context.SaveChanges();
             
         }
 
-        public Lookup GetById(int id){
-            return _context.Lookups.FirstOrDefault(x=>x.Id==id);
+
+        #region Validations 
+        public void PostValidation(LookupCreateDTO lookupDTO)
+        {
+            if (string.IsNullOrEmpty(lookupDTO.Name))
+                throw new ServiceException(ExceptionMessages.LOOKUP_NAME_CANNOT_BE_BLANK);
+            else if (string.IsNullOrEmpty(lookupDTO.Type))
+                throw new ServiceException(ExceptionMessages.TYPE_CANNOT_BE_BLANK);
         }
 
-        
+        public void PutValidation(LookupUpdateDTO lookupDTO)
+        {
+            if (lookupDTO.Id <= 0)
+                throw new ServiceException(ExceptionMessages.LOOKUP_ID_NOT_AVAILABLE);
+            else if (string.IsNullOrEmpty(lookupDTO.Name))
+                throw new ServiceException(ExceptionMessages.LOOKUP_NAME_CANNOT_BE_BLANK);
+            else if (string.IsNullOrEmpty(lookupDTO.Type))
+                throw new ServiceException(ExceptionMessages.TYPE_CANNOT_BE_BLANK);
+
+        }
+        #endregion
     }
 }
