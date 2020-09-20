@@ -99,3 +99,4 @@ D:\projects\omission.api\obj\Debug\netcoreapp3.1\staticwebassets\omission.api.St
 D:\projects\omission.api\obj\Debug\netcoreapp3.1\omission.api.dll
 D:\projects\omission.api\obj\Debug\netcoreapp3.1\omission.api.pdb
 D:\projects\omission.api\obj\Debug\netcoreapp3.1\omission.api.genruntimeconfig.cache
+D:\projects\omission.api\bin\Debug\netcoreapp3.1\package-lock.json

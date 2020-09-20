@@ -23,7 +23,7 @@ namespace omission.api.Controllers
             _lookupService = lookupService;
         }
 
-        [HttpGet("type")]
+        [HttpGet]
         public IActionResult Get(string type)
         {
             try
