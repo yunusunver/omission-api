@@ -58,6 +58,33 @@ namespace omission.api.Services
                 throw new ServiceException(ExceptionMessages.HASHTAG_NAME_CANNOT_BE_BLANK);
         }
 
+        public Object GetUsedHashtags()
+        {
+            var codes = _context.Codes.Where(x => x.Hashtags != null).ToList();
+
+             List<int> selectedHashtags = new List<int>();
+            foreach (var item in codes)
+            {
+                foreach (var hashtag in item.Hashtags)
+                {
+                    
+                    selectedHashtags.Add(hashtag);
+                }
+            }
+
+
+            var res = selectedHashtags.GroupBy(x => x).Select(x =>
+                  new
+                  {
+                    GetById(x.Key).Name,
+                      Count = x.Count()
+                  }
+                ).ToArray();
+
+            return res;
+
+        }
+
         public void Update(HashtagUpdateDTO hashtagUpdateDTO)
         {
             var hashtag = _context.Hashtags.FirstOrDefault(x => x.Id == hashtagUpdateDTO.Id);

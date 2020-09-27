@@ -47,6 +47,31 @@ namespace omission.api.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetUsedHashtags")]
+        public IActionResult GetUsedHashtag()
+        {
+            try
+            {
+                var res = _hashtagService.GetUsedHashtags();
+                return Ok(res);
+
+            }
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
+            }
+        }
+
+
         [HttpPost]
         public IActionResult Post([FromBody] HashtagCreateDTO hashtagCreateDTO)
         {
