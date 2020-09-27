@@ -76,8 +76,9 @@ namespace omission.api.Services
             var res = selectedHashtags.GroupBy(x => x).Select(x =>
                   new
                   {
-                    GetById(x.Key).Name,
-                      Count = x.Count()
+                    Name=GetById(x.Key).Name,
+                    Id = x.Key,
+                    Count = x.Count()
                   }
                 ).ToArray();
 
