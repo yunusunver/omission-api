@@ -20,11 +20,12 @@ namespace omission.api.Services
             _context = context;
         }
 
-        public List<Lookup> GetCodes(string type)
+        public List<Lookup> GetCodes(string type,int page=1,int limit=5)
         {
-
-            return _context.Lookups.Where(x => x.Type == type).ToList();
-
+            var skipData = (page-1)*limit;
+            if(limit!=-1) return _context.Lookups.Where(x => x.Type == type && !x.isDeleted).Skip(skipData).Take(limit).ToList();
+            else if(limit==-1) return _context.Lookups.Where(x => x.Type == type && !x.isDeleted).ToList();
+            return null;
         }
 
         public Lookup GetById(int id)
@@ -72,7 +73,11 @@ namespace omission.api.Services
             lookup.isDeleted = true;
             _context.Lookups.Update(lookup);
             _context.SaveChanges();
-            
+        }
+
+        public int Count(){
+            var result = _context.Lookups.Where(x=>!x.isDeleted).ToList();
+            return result.Count;
         }
 
 

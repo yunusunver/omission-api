@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using omission.api.Context;
 using omission.api.Exceptions;
+using omission.api.Models;
 using omission.api.Models.DTO;
+using omission.api.Models.ViewModels;
 using omission.api.Services;
 using omission.api.Utility;
 
@@ -24,14 +28,19 @@ namespace omission.api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(string type)
+        public IActionResult Get(string type,int page=1,int limit=5)
         {
             try
             {
                 if (string.IsNullOrEmpty(type))
                     throw new ServiceException(ExceptionMessages.TYPE_CANNOT_BE_BLANK);
-                var result = _lookupService.GetCodes(type);
-                return Ok(result);
+                var result = _lookupService.GetCodes(type,page,limit);
+                var count = _lookupService.Count();
+                var response = new ApiResult<List<Lookup>> {
+                    Data = result,
+                    Count = count
+                };
+                return Ok(response);
             }
 
             catch (AuthenticationException)
@@ -47,6 +56,34 @@ namespace omission.api.Controllers
                 return BadRequest(ex.StackTrace);
             }
 
+        }
+        
+        [HttpGet("GetById/{id}")]
+        public IActionResult GetById(int id) {
+             try
+            {
+                if (id<=0)
+                    throw new ServiceException(ExceptionMessages.LOOKUP_ID_NOT_AVAILABLE);
+                var result = _lookupService.GetById(id);
+                
+                var response = new ApiResult<Lookup> {
+                    Data = result
+                };
+                return Ok(response);
+            }
+
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
+            }
         }
 
         [HttpPut]
@@ -97,7 +134,7 @@ namespace omission.api.Controllers
         }
 
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
             try
