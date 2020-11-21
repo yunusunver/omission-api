@@ -64,10 +64,11 @@ namespace omission.api.Services
         public List<CodeListVM> GetCodes(CodeListDTO codeListDTO)
         {
             var currentUser = _userService.GetLoggedInUser();
-
+            
             Expression<Func<Code, bool>> where = x => x.isDeleted == false && x.CreatedBy == currentUser.Id && (
-                 string.IsNullOrEmpty(codeListDTO.Search) || x.Title.Contains(codeListDTO.Search)
+                 string.IsNullOrEmpty(codeListDTO.Search) || x.Title.ToLower().Contains(codeListDTO.Search.ToLower())
              );
+        
             var programmingLanguages = _lookUpService.GetCodes(type:"programmingLanguage",limit:-1);
             var skipData = (codeListDTO.Page - 1) * codeListDTO.Limit;
             var codes = _context.Codes.Where(where).Skip(skipData).Take(codeListDTO.Limit).ToList();
