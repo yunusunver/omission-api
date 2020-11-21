@@ -142,5 +142,16 @@ namespace omission.api.Services
             _context.Codes.Update(findedCode);
             _context.SaveChanges();
         }
+
+        public Code GetCodeById(int id){
+            var currentUser = _userService.GetLoggedInUser();
+            if (id <= 0)
+                throw new ServiceException(ExceptionMessages.CODEID_NOT_AVAILABLE);
+            
+            var findedCode = _context.Codes.FirstOrDefault(x => x.Id == id);
+            if (findedCode == null)
+                throw new ServiceException(ExceptionMessages.CODE_NOT_FOUND);
+            return findedCode;
+        }
     }
 }

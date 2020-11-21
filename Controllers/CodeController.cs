@@ -71,6 +71,28 @@ namespace omission.api.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetCodeById(int id){
+            try
+            {
+                var result = _codeService.GetCodeById(id);
+                return Ok(result);
+            }
+            catch (AuthenticationException)
+            {
+                return Forbid();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex.StackTrace);
+            }
+        }
+
         [HttpPut]
         public IActionResult UpdateCode([FromBody] CodeUpdateDTO codeUpdateDTO)
         {
